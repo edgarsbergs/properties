@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DemoApiController;
+use App\Http\Controllers\PropertyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,3 +20,9 @@ Route::get('/', function () {
 });
 
 Route::get('/api/get_properties/{count?}', [DemoApiController::class, 'index'])->name('api.properties');
+
+/* Admin panel */
+Route::get('/admin/properties', [PropertyController::class, 'index'])->name('admin.properties');
+Route::post('/admin/properties', [PropertyController::class, 'index'])->name('admin.propertiesSearch');
+Route::get('/admin/property/{id}', [PropertyController::class, 'edit'])->name('admin.property');
+Route::post('/admin/property/save', [PropertyController::class, 'update'])->name('admin.updateProperty');

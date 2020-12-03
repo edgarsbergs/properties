@@ -10,4 +10,10 @@ class PropertyType extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+
+    public static function allTypes()
+    {
+        return self::select(['id', 'title'])->get();
+    }
 }

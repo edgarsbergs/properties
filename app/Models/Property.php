@@ -10,4 +10,9 @@ class Property extends Model
     use HasFactory;
 
     protected $guarded = [];
+
+    public function propertyType()
+    {
+        return $this->belongsTo('App\Models\PropertyType', 'id');
+    }
 }
