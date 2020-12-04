@@ -10,7 +10,7 @@ class ApiService
     private $url;
     private $errors;
 
-    public function __construct($url)
+    public function setUrl($url)
     {
         $this->url = $url;
     }

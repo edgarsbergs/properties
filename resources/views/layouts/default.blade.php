@@ -22,6 +22,8 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col">
+            <a href="{{ route('admin.properties') }}" style="display:block;margin-bottom:40px">All properties</a>
+            @include('admin.includes.messages')
             <h1 style="display:inline">@yield('title')</h1>
             @yield('content')
         </div>

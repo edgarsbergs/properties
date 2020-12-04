@@ -11,8 +11,14 @@ class Property extends Model
 
     protected $guarded = [];
 
+    
+    /**
+     * Property has property type
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
     public function propertyType()
     {
-        return $this->belongsTo('App\Models\PropertyType', 'id');
+        return $this->hasOne('App\Models\PropertyType', 'id', 'property_type_id');
     }
 }

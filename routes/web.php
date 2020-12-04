@@ -26,3 +26,4 @@ Route::get('/admin/properties', [PropertyController::class, 'index'])->name('adm
 Route::post('/admin/properties', [PropertyController::class, 'index'])->name('admin.propertiesSearch');
 Route::get('/admin/property/{id}', [PropertyController::class, 'edit'])->name('admin.property');
 Route::post('/admin/property/save', [PropertyController::class, 'update'])->name('admin.updateProperty');
+Route::post('/admin/property/{id}/delete', [PropertyController::class, 'delete'])->name('admin.deleteProperty');

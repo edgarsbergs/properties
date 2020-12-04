@@ -41,9 +41,18 @@
                    value="@if(!old('address')){{$property->address}}@endif{{ old('address') }}"/>
         </div>
 
-        <div class="form-group">
-            <label for="image">Image</label>
-            <input required="required"  type="file" name="image" id="image" class="form-control" />
+        <div class="row">
+            <div class="col col-1 col-sm-2">
+                @if($property->image_thumbnail)
+                    <img src="{{ '/images/thumbs/' . $property->image_thumbnail }}" alt="image" />
+                @endif
+            </div>
+            <div class="col col-11 col-sm-10">
+                <div class="form-group">
+                    <label for="image">Image</label>
+                    <input type="file" name="image" id="image" class="form-control" />
+                </div>
+            </div>
         </div>
 
         <div class="form-group">
@@ -74,7 +83,27 @@
                    value="@if(!old('price')){{$property->price}}@endif{{ old('price') }}"/>
         </div>
 
+        <div class="form-group">
+            @foreach ($deal_types as $deal_type)
+                <label for="{{ $deal_type }}">{{ $deal_type }}</label>
+                <input type="radio" id="{{ $deal_type }}" name="type" value="{{ $deal_type }}"
+                    @if($deal_type == $property->type) checked @endif />
+            @endforeach
+        </div>
+
+        <div class="form-group">
+            <label for="num_bathrooms">Property type</label>
+            <select name="property_type_id" id="property_type_id" class="form-control">
+                <option value=""></option>
+                @foreach($property_types as $type)
+                    <option value="{{ $type->id }}"
+                        @if($type->id == $property->property_type_id) selected @endif />
+                        {{ $type->title }}</option>
+                @endforeach
+            </select>
+        </div>
+
         <input type="hidden" name="id" value="{{ $property->id }}">
-        <input type="submit" name="save" value="Save">
+        <input type="submit" name="save" value="Save" class="btn btn-success">
     </form>
 @endsection

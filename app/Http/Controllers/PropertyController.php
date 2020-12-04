@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Property;
 use App\Models\PropertyType;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+
 
 class PropertyController extends Controller
 {
@@ -31,7 +31,16 @@ class PropertyController extends Controller
 
             // create or update property
             unset($property['property_type']);
-            Property::updateOrCreate($property);
+
+            // skip update if property manually updated
+            $manual_action = Property::where('uuid', $property['uuid'])->value('manual_action');
+            if ($manual_action > 0){
+                continue;
+            }
+
+            Property::updateOrCreate([
+                'uuid' => $property['uuid'],
+            ], $property);
         }
     }
 
@@ -44,7 +53,8 @@ class PropertyController extends Controller
     public function index(Request $request)
     {
         $this->request = $request;
-        $this->properties = Property::with('propertyType');
+        $this->properties = Property::with("propertyType");
+            #->where('manual_action','<>','1');
         $this->buildSearch();
         $this->properties = $this->properties->paginate($this->per_page);
 
@@ -54,6 +64,7 @@ class PropertyController extends Controller
             'properties' => $this->properties,
             'deal_types' => $this->deal_types,
             'property_types' => $property_types,
+            'request' => $request,
         ])->withInput($this->request);
     }
 
@@ -65,12 +76,14 @@ class PropertyController extends Controller
      */
     public function edit($id)
     {
-        $property = Property::find($id)->first();
+        $property = Property::find($id);
 
         return view('admin.properties.edit', [
             'property' => $property,
             'max_bedrooms' => $this->max_bedrooms,
             'max_bathrooms' => $this->max_bathrooms,
+            'deal_types' => $this->deal_types,
+            'property_types' => PropertyType::allTypes(),
         ]);
     }
 
@@ -90,9 +103,10 @@ class PropertyController extends Controller
             'county' => 'required',
             'town' => 'required',
             'address' => 'required',
-            'num_bedrooms' => 'required',
-            'num_bathrooms' => 'required',
-            'price' => 'required',
+            'num_bedrooms' => 'required|numeric',
+            'num_bathrooms' => 'required|numeric',
+            'price' => 'required|numeric',
+            'property_type_id' => 'required|numeric',
         ]);
 
         // image
@@ -103,15 +117,21 @@ class PropertyController extends Controller
             if (in_array($image, ['not_valid_image'])) {
                 $errors = 'Problems uploading image';
             } else {
-                $values['image'] = $image;
+                // assuming filenames are exact, but locations are different
+                $values['image_full'] = $image;
+                $values['image_thumbnail'] = $image;
             }
         }
 
-        $property->save($values);
-        $message = 'Updated!';
+        // property is manually edited
+        $values['manual_action'] = 2;
+
+        if ($property->update($values)) {
+            $message = 'Updated!';
+        }
 
         $redirect = redirect(route('admin.property', $request->id))->withMessage($message);
-        if ($errors) {
+        if (isset($errors)) {
             $redirect->withErrors($errors);
         }
 
@@ -147,6 +167,27 @@ class PropertyController extends Controller
 
         if ($this->request->property_type_id) {
             $this->properties = $this->properties->where('property_type_id', '=', $this->request->property_type_id);
+        }
+    }
+
+
+    /**
+     *
+     *
+     * @param $id property id
+     * @return \Illuminate\Http\RedirectResponse|\Illuminate\Routing\Redirector
+     */
+    public function delete($id)
+    {
+        $property = Property::find($id);
+        $result = $property->update([
+            'manual_action' => '1', //deleted
+        ]);
+
+        if ($result) {
+            return redirect(route('admin.properties'))->withMessage('Property deleted');
+        } else {
+            return redirect(route('admin.properties'))->withErrors('Couldnt delete');
         }
     }
 }

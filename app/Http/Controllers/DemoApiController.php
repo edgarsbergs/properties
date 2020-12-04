@@ -12,11 +12,16 @@ class DemoApiController extends Controller
     private $key;
     private $request_url;
     private $response;
+    private $params; // api params,  e.g. next_page_url
 
     public function __construct()
     {
         $this->url = config('services.demo_api.url');
         $this->key = config('services.demo_api.key');
+        $this->params = [
+            'to' => 0,
+            'next_page_url' => $this->buildRequestUrl(),
+        ];
     }
 
 
@@ -25,41 +30,35 @@ class DemoApiController extends Controller
      *
      * @param int $count
      */
-    public function index($count = 1)
+    public function index($count = 90)
     {
         self::__construct();
-        $this->buildRequestUrl([
-            'page[size]' => $count,
-        ]);
-        $api = new ApiService($this->request_url);
+        $api = new ApiService();
+        $property_controller = new PropertyController;
+
+        $this->buildRequestUrl();
+        $api->setUrl($this->request_url);
+
         $this->response = $api->getJson();
         $properties = $this->extractProperties();
+        $this->extractApiParams();
 
-        $property_controller = new PropertyController;
         $property_controller->save($properties);
-    }
-
-    /**
-     * Makes api request
-     *
-     * @param
-     * @return string
-     */
-    public function get()
-    {
-        $this->buildRequestUrl();
-        $api = new ApiService($this->request_url);
-
-        return $api->getJson();
     }
 
     /**
      * Creates request url
      *
+     * @param string $url
      * @param bool $params
+     * @return bool
      */
-    private function buildRequestUrl($params = false)
+    private function buildRequestUrl($url = '', $params = false)
     {
+        if ($url) {
+            $this->request_url = $url;
+            return true;
+        }
         $this->request_url = $this->url . '?api_key=' . $this->key;
 
         // add additional parameters
@@ -81,5 +80,20 @@ class DemoApiController extends Controller
     public function extractProperties()
     {
         return $this->response['data'];
+    }
+
+    /**
+     * Extract parameters from API's response
+     *
+     * @return mixed
+     */
+    public function extractApiParams()
+    {
+        $this->params = [
+            'next_page_url' => $this->response['next_page_url'],
+            'last_page' => $this->response['last_page'],
+            'to' => $this->response['to'],
+            'total' => $this->response['total'],
+        ];
     }
 }
