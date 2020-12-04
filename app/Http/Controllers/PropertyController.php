@@ -53,8 +53,9 @@ class PropertyController extends Controller
     public function index(Request $request)
     {
         $this->request = $request;
-        $this->properties = Property::with("propertyType");
-            #->where('manual_action','<>','1');
+        $this->properties = Property::with("propertyType")
+            ->where('manual_action','!=',1)
+            ->orWhereNull('manual_action');
         $this->buildSearch();
         $this->properties = $this->properties->paginate($this->per_page);
 
