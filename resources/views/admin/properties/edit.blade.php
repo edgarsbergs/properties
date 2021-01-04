@@ -10,35 +10,31 @@
         <div class="form-group">
             <label for="county">County</label>
             <input required="required" placeholder="County" type="text" name="county" id="county" class="form-control"
-                   value="@if(!old('county')){{$property->county}}@endif{{ old('county') }}"/>
+                   value="{{ old('county', $property->county) }}"/>
         </div>
 
         <div class="form-group">
             <label for="country">Country</label>
             <input required="required" placeholder="Country" type="text" name="country" id="country" class="form-control"
-                   value="@if(!old('country')){{$property->country}}@endif{{ old('country') }}"/>
+                   value="{{ old('country', $property->country) }}"/>
         </div>
 
         <div class="form-group">
             <label for="country">Town</label>
             <input required="required" placeholder="Town" type="text" name="town" id="town" class="form-control"
-                   value="@if(!old('town')){{$property->town}}@endif{{ old('town') }}"/>
+                   value="{{ old('town', $property->town) }}"/>
         </div>
 
         <div class="form-group">
             <label for="country">Description (name)</label>
-            <textarea required name='country'class="form-control">
-              @if(!old('description'))
-                    {!! $property->description !!}
-                @endif
-                {!! old('description') !!}
+            <textarea required name='description'class="form-control">{{ old('description', $property->description) }}
             </textarea>
         </div>
 
         <div class="form-group">
             <label for="country">Displayable Address</label>
             <input required="required" placeholder="Address" type="text" name="address" id="address" class="form-control"
-                   value="@if(!old('address')){{$property->address}}@endif{{ old('address') }}"/>
+                   value="{{ old('description', $property->description) }}"/>
         </div>
 
         <div class="row">
@@ -80,7 +76,7 @@
         <div class="form-group">
             <label for="country">Price</label>
             <input required="required" placeholder="Price" type="text" name="price" id="price" class="form-control"
-                   value="@if(!old('price')){{$property->price}}@endif{{ old('price') }}"/>
+                   value="{{ old('price', $property->price) }}"/>
         </div>
 
         <div class="form-group">
