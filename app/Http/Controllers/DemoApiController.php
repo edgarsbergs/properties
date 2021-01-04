@@ -29,11 +29,16 @@ class DemoApiController extends Controller
      * main logic
      *
      * @param int $count
+     * @return bool
      */
     public function index($count = 90)
     {
-        self::__construct();
-        $api = new ApiService();
+        try {
+            $api = new ApiService();
+        } catch (ApiException $exception) {
+            report($exception);
+            return false;
+        }
         $property_controller = new PropertyController;
 
         $this->buildRequestUrl();

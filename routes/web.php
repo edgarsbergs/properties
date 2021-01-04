@@ -19,8 +19,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/api/get_properties/{count?}', [DemoApiController::class, 'index'])->name('api.properties');
-
 /* Admin panel */
 Route::get('/admin/properties', [PropertyController::class, 'index'])->name('admin.properties');
 Route::post('/admin/properties', [PropertyController::class, 'index'])->name('admin.propertiesSearch');

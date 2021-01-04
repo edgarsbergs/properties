@@ -39,6 +39,7 @@ class Property extends Model
         $search_params = [];
         unset($params['_token']);
         unset($params['save']);
+        unset($params['page']);
 
         // build search params
         // @TODO cases for columns where search operator is not '='
