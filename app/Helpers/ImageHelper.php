@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App;
 
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use Image;
 
-class ImageController extends Controller
+class ImageHelper
 {
 
     private $image;

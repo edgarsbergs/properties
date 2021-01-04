@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Property;
 use App\Models\PropertyType;
 use Illuminate\Http\Request;
+#use ImageHelper;
 
 
 class PropertyController extends Controller
@@ -53,10 +54,11 @@ class PropertyController extends Controller
     public function index(Request $request)
     {
         $this->request = $request;
+
         $this->properties = Property::with("propertyType")
             ->where('manual_action','!=',1)
-            ->orWhereNull('manual_action');
-        $this->buildSearch();
+            ->orWhereNull('manual_action')
+            ->search();
         $this->properties = $this->properties->paginate($this->per_page);
 
         $property_types = PropertyType::allTypes();
@@ -112,8 +114,8 @@ class PropertyController extends Controller
 
         // image
         if ($request->image) {
-            $image_controller = new ImageController;
-            $image = $image_controller->upload($request->image);
+            $imageHelper = new ImageHelper;
+            $image = $imageHelper->upload($request->image);
 
             if (in_array($image, ['not_valid_image'])) {
                 $errors = 'Problems uploading image';
@@ -138,39 +140,6 @@ class PropertyController extends Controller
 
         return $redirect;
     }
-
-
-    /**
-     * If search form is submitted add additional Eloquent rules
-     */
-    public function buildSearch()
-    {
-        // GET doesnt contain search parameters so no need for search results
-        if ($this->request->isMethod('get')) {
-            return true;
-        }
-
-        if ($this->request->description) {
-            $this->properties = $this->properties->where('description', 'LIKE', '%' . $this->request->description . '%');
-        }
-
-        if ($this->request->num_bedrooms) {
-            $this->properties = $this->properties->where('num_bedrooms', '=', $this->request->num_bedrooms);
-        }
-
-        if ($this->request->price) {
-            $this->properties = $this->properties->where('price', '=', $this->request->price);
-        }
-
-        if ($this->request->type) {
-            $this->properties = $this->properties->where('type', '=', $this->request->type);
-        }
-
-        if ($this->request->property_type_id) {
-            $this->properties = $this->properties->where('property_type_id', '=', $this->request->property_type_id);
-        }
-    }
-
 
     /**
      *
