@@ -16,8 +16,15 @@
 
         <div class="col">
             <div class="form-group">
-                <label for="price">Price</label>
-                <input placeholder="Price" type="number" v-model="search.price" name="price" id="price" class="form-control" value="{{ $request->price }}"/>
+                <label for="price">Min. price</label>
+                <input placeholder="Price" type="number" v-model="search.min_price" name="min_price" id="min_price" class="form-control" value="{{ $request->min_price }}"/>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="form-group">
+                <label for="price">Max. price</label>
+                <input placeholder="Price" type="number" v-model="search.max_price" name="max_price" id="max_price" class="form-control" value="{{ $request->max_price }}"/>
             </div>
         </div>
 

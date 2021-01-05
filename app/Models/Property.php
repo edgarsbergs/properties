@@ -42,11 +42,25 @@ class Property extends Model
         unset($params['page']);
 
         // build search params
-        // @TODO cases for columns where search operator is not '='
         foreach ($params as $column => $value) {
-            if ($value) {
-                $search_params[$column] = $value;
+            if (!$value) {
+                continue;
             }
+            $operator = '=';
+            if (in_array($column, ['description'])) {
+                $operator = 'LIKE';
+                $value = "%$value%";
+            }
+            if (in_array($column, ['min_price'])) {
+                $column = 'price';
+                $operator = '>';
+            }
+            if (in_array($column, ['max_price'])) {
+                $column = 'price';
+                $operator = '<';
+            }
+
+            array_push($search_params, [$column, $operator, $value]);
         }
 
         return $query->where($search_params);

@@ -2,7 +2,9 @@ vmdata.search = {
 	description: '',
 	num_bedrooms: '',
 	property_type_id: '',
-	price: '',
+    min_price: '',
+    max_price: '',
+    page: 1,
 };
 
 var vm = new Vue({
@@ -15,6 +17,7 @@ var vm = new Vue({
 				params: this.search
 			}).then(function (response) {
 				self.properties = response.data.properties;
+				self.pagination = response.data.pagination;
 			});
 		},
 		getPropertyUrl: function(id) {

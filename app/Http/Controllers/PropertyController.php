@@ -14,7 +14,7 @@ class PropertyController extends Controller
     private $request;
     public $max_bedrooms = 20;
     public $max_bathrooms = 20;
-    public $per_page = 15;
+    public $per_page = 5;
     public $deal_types = ['sale', 'rent'];
 
 
@@ -59,14 +59,23 @@ class PropertyController extends Controller
             ->where('manual_action','!=',1)
             ->orWhereNull('manual_action')
             ->search();
-        $this->properties = $this->properties->paginate($this->per_page);
+        $this->properties = $this->properties->paginate(3);
 
         $property_types = PropertyType::allTypes();
+
+        // getting pagination variable from elequent result
+        $pagination = [
+            "total_count" => $this->properties->total(),
+            "per_page" => $this->properties->perPage(),
+            "current_page" => $this->properties->currentPage(),
+            "pages" => ceil($this->properties->total() / $this->properties->perPage()),
+        ];
 
         $data = [
             'properties' => $this->properties->all(),
             'deal_types' => $this->deal_types,
             'property_types' => $property_types,
+            'pagination' => $pagination,
         ];
 
         if ($request->wantsJson()) {

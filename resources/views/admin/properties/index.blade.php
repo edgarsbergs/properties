@@ -29,8 +29,37 @@
                         <br />Price: @{{ property.price }}
                     </li>
                 </ul>
+
+                <div id="pagination">
+                    Current page: @{{ pagination.current_page }} <br />
+                    <!-- @TODO if current page > total pages count (after applying filter), reset that current page> -->
+                    <span v-if="pagination.current_page > 1">
+                        <label for="prev_page"><<</label>
+                        <input type="radio" name="page" :value="pagination.current_page - 1" v-model="search.page" id="prev_page">
+                    </span>
+                    <span v-for="index in pagination.pages" :key="index">
+                        <label :for="'p_' + index" >@{{ index }}</label>
+                        <input type="radio" name="page" :value="index" v-model="search.page" :id="'p_' + index">
+                    </span>
+                    <span v-if="pagination.current_page < pagination.pages">
+                        <label for="next_page">>></label>
+                        <input type="radio" name="page" :value="pagination.current_page + 1" v-model="search.page" id="next_page">
+                    </span>
+                    <span v-if="pagination.current_page != pagination.pages">
+                        <label for="last_page">Last page</label>
+                        <input type="radio" name="page" :value="pagination.pages" v-model="search.page" id="last_page">
+                    </span>
+
+                    <br />Total properties: @{{ pagination.total_count }}
+                </div>
             @endif
         </div>
     </div>
     <script src="/js/script.js"></script>
+    <style>
+        #pagination{margin-top:20px}
+        input[type="radio"]:hover, label:hover{cursor:pointer}
+        input[type="radio"] {margin-right:5px}
+        .active{font-weight: bold}
+    </style>
 @endsection
