@@ -63,12 +63,17 @@ class PropertyController extends Controller
 
         $property_types = PropertyType::allTypes();
 
-        return view('admin.properties.index', [
-            'properties' => $this->properties,
+        $data = [
+            'properties' => $this->properties->all(),
             'deal_types' => $this->deal_types,
             'property_types' => $property_types,
-            'request' => $request,
-        ])->withInput($this->request);
+        ];
+
+        if ($request->wantsJson()) {
+            return $data;
+        }
+
+        return view('admin.properties.index', ['data' => $data, 'request' => $this->request])->withInput($this->request);
     }
 
     /**
